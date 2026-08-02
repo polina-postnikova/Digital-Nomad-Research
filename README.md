@@ -1,8 +1,7 @@
-# Digital Nomad Research
+# A Global Benchmark Dataset of Digital-Nomad Policy Adoption, Tourism Flows, and Labor-Market Indicators for Cross-Country Mobility Research
 
 <p align="center">
   <strong>Trustworthy AI-assisted policy curation and a human-verified benchmark for digital nomad visa research</strong><br>
-  Paper notation: <code>\textsc{DigitalNomad}</code>
 </p>
 
 <p align="center">
@@ -13,7 +12,7 @@
   <img alt="Methods" src="https://img.shields.io/badge/Methods-TWFE%20%7C%20DML-B35C00">
 </p>
 
-**Digital Nomad Research** is an open research benchmark for evaluating **AI-assisted policy extraction** through complete human verification and downstream empirical validation. The project combines a global macroeconomic panel covering approximately **190 countries** with a **human-verified benchmark of 32 digital nomad visa programmes**, allowing researchers to evaluate the reliability of large language model (LLM) policy extraction and assess how policy curation errors affect downstream econometric analysis.
+**A Global Benchmark Dataset of Digital-Nomad Policy Adoption, Tourism Flows, and Labor-Market Indicators for Cross-Country Mobility Research* is an open research benchmark for evaluating **AI-assisted policy extraction** through complete human verification and downstream empirical validation. The project combines a global macroeconomic panel covering approximately **190 countries** with a **human-verified benchmark of 32 digital nomad visa programmes**, allowing researchers to evaluate the reliability of large language model (LLM) policy extraction and assess how policy curation errors affect downstream econometric analysis.
 
 Unlike conventional policy datasets, every verified policy record has been independently validated against official government websites and primary legal sources. The benchmark is intended to support reproducible research in trustworthy AI, policy analytics, and computational social science.
 
