@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import pearsonr
 import seaborn as sns
 
-file_path = "DigitalNomadPolicyDataset.xlsx"
+file_path = "DigitalNomadDataset.xlsx"
 
 df = pd.read_excel(
     file_path,
