@@ -1,0 +1,1 @@
+import pandas as pd; file_path = 'DigitalNomadDataset.xlsx'; df_sheet1 = pd.read_excel(file_path, sheet_name=0); print("Data from Sheet 1:\n", df_sheet1.head()); df_sheet2 = pd.read_excel(file_path, sheet_name=1); print("Data from Sheet 2:\n", df_sheet2.head()); df_sheet3 = pd.read_excel(file_path, sheet_name=1); print("Data from Sheet 3:\n", df_sheet3.head())
