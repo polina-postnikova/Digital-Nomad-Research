@@ -227,6 +227,6 @@ The econometric analyses are intended to assess the robustness of downstream inf
 
 # License
 
-The repository code, documentation, and analysis scripts are released under the **MIT License** (or replace with your preferred license).
+The repository code, documentation, and analysis scripts are released under the **MIT License**.
 
 The benchmark dataset is released for academic research and reproducibility. Users should consult the terms of use of the original government data sources when redistributing derived policy information.
