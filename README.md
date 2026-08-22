@@ -2,16 +2,16 @@
 
 **Auditing LLM-Curated Digital-Nomad Visa Data and Evaluating Downstream Causal Consequences**
 
-![SDG 8](assets/sdg8_icon.svg) **SDG 8 — Decent Work and Economic Growth**
+<img width="100" height="100" alt="E_PRINT_08" src="https://github.com/user-attachments/assets/762b5f38-0aea-4daa-942a-98bcdde2ad58" /> 
 
 > Anonymous replication repository. Submitted for double-blind review.
 
 <p align="center">
   <img alt="Trustworthy AI" src="https://img.shields.io/badge/Trustworthy%20AI-Human--Verified-4F6BED">
-  <img alt="Policy Benchmark" src="https://img.shields.io/badge/Policy%20Benchmark-32%20Verified%20Jurisdictions-0B7A75">
+  <img alt="Policy Benchmark" src="https://img.shields.io/badge/Policy%20Benchmark-33%20Verified%20Jurisdictions-0B7A75">
   <img alt="Coverage" src="https://img.shields.io/badge/Macroeconomic%20Panel-190%20Countries-536DFE">
   <img alt="Research" src="https://img.shields.io/badge/Policy-Digital%20Nomad%20Visas-7A4FB3">
-  <img alt="Methods" src="https://img.shields.io/badge/Methods-TWFE%20%7C%20DML-B35C00">
+  <img alt="Methods" src="https://img.shields.io/badge/Methods-TWFE%20%7C%20Callaway--Santanna-B35C00">
 </p>
 
 
