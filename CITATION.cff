@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this repository in your research, please cite it."
+title: "Trustworthy AI for Global Policy Evidence: Auditing LLM-Curated Digital-Nomad Visa Data and Evaluating Downstream Causal Consequences"
+type: dataset
+abstract: >
+  Replication repository for a study of LLM-assisted curation and human
+  verification of digital-nomad visa policy data, together with downstream
+  macroeconomic and tourism analysis. The repository contains audited policy
+  data, processed country-year data, analysis scripts, and generated figures
+  used to evaluate how policy-data curation and treatment-date errors can
+  propagate into comparative and staggered-adoption analysis.
+keywords:
+  - trustworthy AI
+  - digital nomad visas
+  - digital nomad visa
+  - policy data
+  - LLM
+  - large language models
+  - data auditing
+  - human verification
+  - causal inference
+  - difference-in-differences
+  - staggered adoption
+  - TWFE
+  - Callaway-Sant'Anna
+  - policy research
+  - replication
+authors:
+  - name: "Anonymous"
+    affiliation: "Anonymous for double-blind review"
+license: MIT
+repository-code: "https://github.com/REPLACE_WITH_REPOSITORY_URL"
+repository: "https://github.com/REPLACE_WITH_REPOSITORY_URL"
