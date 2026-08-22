@@ -46,41 +46,41 @@ through a staggered-adoption difference-in-differences estimator.
 ├── MANIFEST.csv                       <- paper figure/table -> script -> data map
 ├── checksums.sha256                   <- integrity hashes for all released files
 ├── paper/
-│   └── main.tex                       <- anonymized paper source (was test.tex)
+│  
 │
-├── data/
-│   ├── raw/                           <- untouched third-party downloads (read-only)
+├── Data/
+│   ├── Raw/                           <- untouched third-party downloads (read-only)
 │   │   ├── world_bank_indicators/     <- GDP, unemployment, inflation, internet use, etc.
 │   │   └── un_tourism/                <- arrivals, tourism expenditure, tourism GDP share
-│   ├── intermediate/                  <- LLM + human audit artifacts (pre-harmonization)
-│   │   ├── stage1_llm_screening.xlsx      (was LLM_Stage1.xlsx)
-│   │   ├── stage2_llm_field_audit.xlsx    (was LLM_Stage2.xlsx)
-│   │   └── stage1_human_audit.csv         (was Completed_Stage1_Audit_190-4.csv)
-│   └── processed/                     <- analysis-ready, harmonized panel (script output)
-│       └── digital_nomad_panel.xlsx       (was DigitalNomadDataset.xlsx)
+│   ├── Intermediate/                  <- LLM + human audit artifacts (pre-harmonization)
+│   │   ├── stage1_llm_screening.xlsx      
+│   │   ├── stage2_llm_field_audit.xlsx   
+│   │   └── human_audit.csv         
+│   └── Processed/                     <- analysis-ready, harmonized panel (script output)
+│       └── DigitalNomadDataset.xlsx
 │
 ├── docs/
-│   ├── data_dictionary.md             <- full field-by-field dictionary (see below)
-│   ├── audit_protocol.md              <- converted from protocol_completed.docx
-│   └── provenance/                    <- one record per verified primary-source citation
+│   ├── data_dictionary.md             <- full field-by-field dictionary 
+│   ├── audit_protocol.md             
+│
 │
 ├── scripts/
-│   ├── 00_load/
-│   │   └── load_sample.py                 (was sample_loader.py)
-│   ├── 01_validate/
-│   │   └── cross_validate_tourism.py       (was CrossValidation-2.py)
-│   ├── 02_audit/
-│   │   └── missingness_audit.py            (was MissingnessAudit-2.py)
-│   ├── 03_analysis/
-│   │   └── staggered_adoption_sensitivity.py (was ml.py)
+│   ├── load_sample.py
+│   │   
+│   ├── cross_validate_tourism.py
+│   │  
+│   ├── missingness_audit.py  
+│   │   
+│   ├── staggered_adoption_sensitivity.py
+│   │   
 │   └── run_all.sh                     <- single entry point, see "Reproduction" below
 │
 ├── figures/
-│   ├── source/                        <- editable diagram sources (drawio/svg)
-│   │   └── pipeline_diagram.drawio.svg     (was figurelight_drawio.svg)
-│   └── generated/                     <- outputs written by scripts (gitignored, rebuilt)
+│   ├──                     
+│   │   
+│   └── generated/                  
 │
-├── results/                           <- all tables/CSVs written by scripts (gitignored)
+├── results/                           <- all tables/CSVs written by scripts
 │
 ├── tests/
 │   └── test_fresh_environment.sh      <- clean-environment smoke test (see below)
