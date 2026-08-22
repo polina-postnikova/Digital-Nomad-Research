@@ -109,7 +109,10 @@ Digital-Nomad-Research-main/
     ├── twfe_vs_cs.svg
     ├── thailand_vietnam.svg
     ├── missingness.svg
+    ├── descriptive_unemployment_trajectories.svg
+    ├── pooled_tourism_growth_relationship.svg
     └── *.py
+
 ```
 
 The repository also contains the source files used to generate several figures in `Figs/` and analysis outputs in `Scripts/Results/`.
