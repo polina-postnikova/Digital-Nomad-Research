@@ -8,7 +8,7 @@
 [![Policy benchmark](https://img.shields.io/badge/Policy%20Benchmark-190%20Jurisdictions-0B7A75)](#data)
 [![Macroeconomic panel](https://img.shields.io/badge/Macroeconomic%20Panel-190%20Countries-536DFE)](#data)
 [![Methods](https://img.shields.io/badge/Methods-TWFE%20%7C%20CS--style%20DID-B35C00)](#analysis)
-<img width="100" height="100" alt="E_GIF_08" src="https://github.com/user-attachments/assets/9902c3fe-d571-4347-bb0d-9869e28ce895" />
+<img width="100" height="100" alt="E_GIF_08" src="https://github.com/user-attachments/assets/a22b7cd0-0c1a-405f-a5d1-f69e16254208" />
 
 ---
 
@@ -109,10 +109,7 @@ Digital-Nomad-Research-main/
     ├── twfe_vs_cs.svg
     ├── thailand_vietnam.svg
     ├── missingness.svg
-    ├── descriptive_unemployment_trajectories.svg
-    ├── pooled_tourism_growth_relationship.svg
     └── *.py
-
 ```
 
 The repository also contains the source files used to generate several figures in `Figs/` and analysis outputs in `Scripts/Results/`.
@@ -453,3 +450,29 @@ The repository should therefore be read as a research artifact: the audited poli
 ## Citation
 
 Citation information is not provided as a separate `CITATION.cff` file in the current repository. Until a final bibliographic record is added, please cite the associated paper/research project and identify this repository as the replication data and analysis repository.
+
+
+## Reproducibility checklist
+
+The repository now includes the infrastructure needed for a clean replication workflow:
+
+- `reproducibility.yml` — fixed analysis seed, simulation settings, and documented LLM/model settings;
+- `environment.yml` and `requirements.txt` — pinned Python environment specifications;
+- `run_all.sh` — single ordered entry point for the downstream analysis and scripted figures;
+- `MANIFEST.csv` — figure/result-to-script/input mapping;
+- `checksums.sha256` — SHA-256 integrity hashes for stable released files;
+- `tests/test_fresh_environment.sh` — fresh-environment smoke test.
+
+Run the full workflow with:
+
+```bash
+./run_all.sh
+```
+
+For a fast smoke test using two simulation repetitions:
+
+```bash
+SIM_REPS=2 ./run_all.sh
+```
+
+See [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) for the detailed checklist and verification instructions.
