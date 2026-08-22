@@ -8,6 +8,7 @@
 [![Policy benchmark](https://img.shields.io/badge/Policy%20Benchmark-190%20Jurisdictions-0B7A75)](#data)
 [![Macroeconomic panel](https://img.shields.io/badge/Macroeconomic%20Panel-190%20Countries-536DFE)](#data)
 [![Methods](https://img.shields.io/badge/Methods-TWFE%20%7C%20CS--style%20DID-B35C00)](#analysis)
+<img width="1000" height="1000" alt="E_GIF_08" src="https://github.com/user-attachments/assets/9902c3fe-d571-4347-bb0d-9869e28ce895" />
 
 ---
 
