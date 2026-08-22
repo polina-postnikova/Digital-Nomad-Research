@@ -117,7 +117,7 @@ legend = ax.legend(
 )
 
 plt.tight_layout() 
-fig.savefig("fig2_missingness_pastel.svg", format="svg", bbox_inches="tight")
+fig.savefig("missingness.svg", format="svg", bbox_inches="tight")
 
-print("Saved SVG figure as 'fig2_missingness_pastel.svg'")
+print("Saved SVG figure as 'missingness.svg'")
 plt.show()
