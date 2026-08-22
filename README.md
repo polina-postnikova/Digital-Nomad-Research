@@ -1,249 +1,451 @@
 # Trustworthy AI for Global Policy Evidence
 
-**Auditing LLM-Curated Digital-Nomad Visa Data and Evaluating Downstream Causal Consequences**
+## Auditing LLM-Curated Digital-Nomad Visa Data and Evaluating Downstream Causal Consequences
 
-<img width="100" height="100" alt="E_PRINT_08" src="https://github.com/user-attachments/assets/762b5f38-0aea-4daa-942a-98bcdde2ad58" /> 
+> Anonymous research repository for a study of LLM-assisted policy-data curation, human verification, and downstream causal analysis of digital-nomad visa adoption.
 
-> Anonymous replication repository. Submitted for double-blind review.
+[![Trustworthy AI](https://img.shields.io/badge/Trustworthy%20AI-Human--Verified-4F6BED)](#research-overview)
+[![Policy benchmark](https://img.shields.io/badge/Policy%20Benchmark-190%20Jurisdictions-0B7A75)](#data)
+[![Macroeconomic panel](https://img.shields.io/badge/Macroeconomic%20Panel-190%20Countries-536DFE)](#data)
+[![Methods](https://img.shields.io/badge/Methods-TWFE%20%7C%20CS--style%20DID-B35C00)](#analysis)
 
-<p align="center">
-  <img alt="Trustworthy AI" src="https://img.shields.io/badge/Trustworthy%20AI-Human--Verified-4F6BED">
-  <img alt="Policy Benchmark" src="https://img.shields.io/badge/Policy%20Benchmark-33%20Verified%20Jurisdictions-0B7A75">
-  <img alt="Coverage" src="https://img.shields.io/badge/Macroeconomic%20Panel-190%20Countries-536DFE">
-  <img alt="Research" src="https://img.shields.io/badge/Policy-Digital%20Nomad%20Visas-7A4FB3">
-  <img alt="Methods" src="https://img.shields.io/badge/Methods-TWFE%20%7C%20Callaway--Santanna-B35C00">
-</p>
+---
 
+## Research overview
 
-## Research question
+Large language models can turn unstructured legal and policy material into structured datasets, but errors in policy definitions and treatment dates can affect the results of subsequent empirical analysis.
 
-Large Language Models are increasingly used to curate structured policy datasets
-from unstructured legal text, but little is known about how the resulting
-extraction errors propagate into downstream causal-timing inference. This
-repository accompanies a paper that asks:
+This repository studies that problem using digital-nomad visa (DNV) policy data. The workflow combines:
 
-> **How can researchers determine whether LLM-curated global policy data are
-> sufficiently trustworthy for consequential comparative and causal analysis?**
+1. **LLM-assisted Stage 1 screening** of 190 jurisdictions.
+2. **Primary-source verification** of qualifying policies and policy attributes.
+3. **A structured field-level audit** of adoption timing, duration, income requirements, fees, and tax treatment.
+4. **A country-year macroeconomic and tourism panel** linked to the policy data.
+5. **Data-quality and missingness checks.**
+6. **Cross-validation of tourism arrivals and expenditure measures.**
+7. **Staggered-adoption analysis**, including a conventional two-way fixed-effects (TWFE) benchmark and a Callaway–Sant'Anna-style group-time/event-time analysis.
+8. **A semi-synthetic error-propagation experiment** examining the consequences of using different treatment-date definitions.
 
-We answer this with a two-stage audit — an LLM extraction pass followed by
-complete, independent human verification against primary legal gazettes and
-immigration portals — applied to a 190-jurisdiction digital-nomad visa (DNV)
-policy panel, and a semi-synthetic error-propagation experiment that traces
-one specific curation error (announcement date vs. verified effective date)
-through a staggered-adoption difference-in-differences estimator.
+The central research question is:
+
+> **How trustworthy are LLM-curated global policy data for consequential comparative and causal analysis?**
+
+The repository is designed to make the data, audit trail, analysis scripts, and generated research outputs inspectable and reproducible.
+
+---
+
+## Key design principles
+
+### Primary sources take precedence
+
+The audit treats statutes, regulations, decrees, gazettes, official immigration authorities, consular guidance, and other government sources as the controlling evidence for policy fields.
+
+Secondary sources are used for discovery and cross-checking, but a secondary source alone does not establish that a jurisdiction has a qualifying DNV.
+
+### Explicit DNV definition
+
+A qualifying digital-nomad visa is defined as a legally distinct immigration status or permit whose eligibility explicitly permits remote work for a non-domestic employer or non-domestic clients as a basis for admission or residence, independently of a domestic job offer.
+
+The audit therefore excludes, among other cases:
+
+- ordinary tourist or visitor arrangements that merely tolerate incidental remote work;
+- entrepreneur/start-up routes unless the same instrument independently provides a qualifying remote-employment pathway;
+- policies inferred solely from marketing language or secondary aggregators.
+
+### Preserve raw evidence
+
+The audit records source evidence, source metadata, access dates, raw values, original units/currencies, and normalization rules. Derived or normalized values are not treated as if they were the underlying legal threshold.
+
+### Separate historical adoption from current status
+
+A country can have a historical DNV adoption event while no longer operating the same programme. The dataset therefore distinguishes adoption timing from operative/current status and records policy changes separately where possible.
 
 ---
 
 ## Repository structure
 
-```
-.
-├── README.md                          <- this file
-├── LICENSE                            <- code license (MIT, see below)
-├── DATA_LICENSE.md                    <- license/terms for released data + figures
-├── CITATION.cff                       <- machine-readable citation
-├── environment.yml / requirements.txt <- reproducible environment
-├── MANIFEST.csv                       <- paper figure/table -> script -> data map
-├── checksums.sha256                   <- integrity hashes for all released files
-├── paper/
-│  
+```text
+Digital-Nomad-Research-main/
+├── README.md
+├── LICENSE
 │
 ├── Data/
-│   ├── Raw/                           <- untouched third-party downloads (read-only)
-│   │   ├── world_bank_indicators/     <- GDP, unemployment, inflation, internet use, etc.
-│   │   └── un_tourism/                <- arrivals, tourism expenditure, tourism GDP share
-│   ├── Intermediate/                  <- LLM + human audit artifacts (pre-harmonization)
-│   │   ├── stage1_llm_screening.xlsx      
-│   │   ├── stage2_llm_field_audit.xlsx   
-│   │   └── human_audit.csv         
-│   └── Processed/                     <- analysis-ready, harmonized panel (script output)
+│   ├── Raw/
+│   │   ├── GDP.xls
+│   │   ├── Unemployment.xls
+│   │   ├── Inflation, consumer prices (annual %).csv
+│   │   ├── Official exchange rate (LCU per US$, period average).csv
+│   │   ├── internet penetration data.csv
+│   │   ├── price level index (GDP).csv
+│   │   ├── UN Tourism inbound arrivals.xlsx
+│   │   ├── UN Tourism inbound expenditure.xlsx
+│   │   ├── UN Tourism employed persons.xlsx
+│   │   └── Tourism direct GDP as a proportion of total GDP (%).xlsx
+│   │
+│   ├── Intermediate/
+│   │   ├── LLM_Stage1.xlsx
+│   │   ├── LLM_Stage2.xlsx
+│   │   └── Audit_Stage1_Stage2.csv
+│   │
+│   └── Processed/
 │       └── DigitalNomadDataset.xlsx
 │
-├── docs/
-│   ├── data_dictionary.md             <- full field-by-field dictionary 
-│   ├── audit_protocol.md             
+├── Docs/
+│   ├── data_dictionary.md
+│   └── Stage 1 and Stage 2: LLM, Retrieval, Source-Hierarchy, and Field-Level Audit.md
 │
+├── Scripts/
+│   ├── sample_loader.py
+│   ├── CrossValidation.py
+│   ├── MissingnessAudit.py
+│   └── Results/
+│       ├── staggered_adoption_sensitivity.py
+│       └── *.csv
 │
-├── scripts/
-│   ├── load_sample.py
-│   │   
-│   ├── cross_validate_tourism.py
-│   │  
-│   ├── missingness_audit.py  
-│   │   
-│   ├── staggered_adoption_sensitivity.py
-│   │   
-│   └── run_all.sh                     <- single entry point, see "Reproduction" below
-│
-├── figures/
-│   ├──                     
-│   │   
-│   └── generated/                  
-│
-├── results/                           <- all tables/CSVs written by scripts
-│
-├── tests/
-│   └── test_fresh_environment.sh      <- clean-environment smoke test (see below)
-│
-└── .github/workflows/reproduce.yml    <- CI job that reruns run_all.sh on every push
+└── Figs/
+    ├── digital_nomad_map.svg
+    ├── event_study.svg
+    ├── twfe_vs_cs.svg
+    ├── thailand_vietnam.svg
+    ├── missingness.svg
+    └── *.py
 ```
 
-Only `data/raw/` and `data/intermediate/` are tracked as static input data.
-Everything under `data/processed/`, `figures/generated/`, and `results/` is
-**generated by the scripts** and is git-ignored except for a small set of
-pinned example outputs used by the CI smoke test.
+The repository also contains the source files used to generate several figures in `Figs/` and analysis outputs in `Scripts/Results/`.
 
 ---
 
-## Requirements
+## Data
 
-- Python 3.11
-- Packages (pinned in `requirements.txt` / `environment.yml`):
-  `pandas`, `numpy`, `scipy`, `statsmodels`, `matplotlib`, `seaborn`, `openpyxl`
-- No GPU or paid API access is required to **reproduce the released results**:
-  the LLM extraction pass itself is not re-run by this repository (see
-  "What this repository does and does not reproduce" below); all downstream
-  scripts operate on the already-extracted/audited files in `data/intermediate/`.
+### Processed analysis dataset
 
-Install with either:
+`Data/Processed/DigitalNomadDataset.xlsx` contains two linked worksheets:
+
+| Worksheet | Rows | Columns | Description |
+|---|---:|---:|---|
+| `tourism_and_macroeconomic_data` | 2,464 | 14 | Country-year macroeconomic and tourism panel |
+| `policy_data` | 33 | 3 | Policy-adoption information for the countries represented in the processed policy table |
+
+The macro/tourism panel contains, among other variables:
+
+- country name and ISO3 code;
+- year;
+- GDP;
+- unemployment rate;
+- tourism expenditure;
+- tourism GDP share;
+- tourism employment;
+- business and total tourism arrivals;
+- internet usage;
+- inflation;
+- exchange rate;
+- GDP price-level index.
+
+The complete field definitions and harmonization rules are documented in [`Docs/data_dictionary.md`](Docs/data_dictionary.md).
+
+### Intermediate audit data
+
+`Data/Intermediate/` contains the policy-curation and verification artifacts:
+
+- `LLM_Stage1.xlsx` — Stage 1 LLM-assisted screening/discovery output;
+- `LLM_Stage2.xlsx` — Stage 2 field-level audit material;
+- `Audit_Stage1_Stage2.csv` — consolidated audit data used by the analysis.
+
+The Stage 1/Stage 2 methodology, source hierarchy, inclusion criteria, evidence rules, and translation/normalization procedures are documented in [`Docs/Stage 1 and Stage 2: LLM, Retrieval, Source-Hierarchy, and Field-Level Audit.md`](Docs/Stage%201%20and%20Stage%202%3A%20LLM%2C%20Retrieval%2C%20Source-Hierarchy%2C%20and%20Field-Level%20Audit.md).
+
+### Raw data
+
+`Data/Raw/` contains the source macroeconomic and tourism files used to construct the processed panel, including World Bank-style indicators and UN Tourism measures.
+
+Raw files should be treated as source inputs rather than edited analysis files.
+
+---
+
+## Audit methodology
+
+### Stage 1 — jurisdiction-level screening
+
+Stage 1 covers all **190 jurisdictions** in the macro/tourism panel.
+
+The screening process:
+
+1. applies a predefined DNV definition;
+2. identifies plausible policy instruments;
+3. uses structured secondary-source discovery for unresolved cases;
+4. traces plausible claims back to primary legal or official sources;
+5. records classification, evidence, source metadata, and confidence.
+
+The protocol distinguishes:
+
+- Qualifying Policy;
+- No Qualifying Policy;
+- Announced but Inactive Policy;
+- Unresolved Status.
+
+The audit was conducted as an interactive LLM-assisted research process rather than as a deterministic batch API experiment. Consequently, the repository preserves the resulting audit artifacts and protocol rather than claiming that the original LLM browsing session can be replayed exactly.
+
+### Stage 2 — field-level verification
+
+Stage 2 independently audits confirmed adopters and focuses on detailed policy fields such as:
+
+- adoption timing;
+- permit/visa duration;
+- income requirements;
+- visa or permit fees;
+- tax treatment;
+- remote-work eligibility and the underlying qualifying instrument.
+
+For each field, the methodology prioritizes primary legal and official sources and records evidence and provenance where available.
+
+The documented Stage 2 review date is **2026-08-09**.
+
+---
+
+## Analysis workflow
+
+The repository contains four main analysis components.
+
+### 1. Sample inspection
+
+`Scripts/sample_loader.py` loads the processed Excel workbook and prints the first rows of its worksheets.
 
 ```bash
-# conda / mamba
-mamba env create -f environment.yml
-conda activate dnv-audit
-
-# or pip
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+python Scripts/sample_loader.py
 ```
 
----
+**Note:** the script currently expects `DigitalNomadDataset.xlsx` in its working directory. If you run it from the repository root, either place/copy the processed workbook there or update the `file_path` in the script to:
 
-## Reproduction
+```text
+Data/Processed/DigitalNomadDataset.xlsx
+```
 
-From a clean environment:
+### 2. Tourism cross-validation
+
+`Scripts/CrossValidation.py` compares year-over-year growth in tourism arrivals and tourism expenditure.
+
+For countries with sufficient observations, it calculates Pearson correlations between arrivals growth and expenditure growth, and it also reports the pooled correlation.
 
 ```bash
-git clone <anonymized-repo-url>
-cd <repo>
-mamba env create -f environment.yml && conda activate dnv-audit
-bash scripts/run_all.sh
+python Scripts/CrossValidation.py
 ```
 
-`run_all.sh` runs, in order:
+The script currently writes `arrival_expenditure_validation.csv` to its working directory and likewise expects `DigitalNomadDataset.xlsx` to be available there.
 
-1. `scripts/00_load/load_sample.py` — sanity-loads the panel and prints head
-   of each sheet.
-2. `scripts/01_validate/cross_validate_tourism.py` — pooled and per-country
-   arrivals/expenditure growth-rate validation (produces
-   `results/arrival_expenditure_validation.csv` and
-   `figures/generated/pooled_tourism_growth_relationship.svg`).
-3. `scripts/02_audit/missingness_audit.py` — variable-, country-, and
-   year-level missingness audit for every sheet (produces the missingness
-   tables/heatmaps used in the appendix).
-4. `scripts/03_analysis/staggered_adoption_sensitivity.py` — builds the
-   analysis panel, runs the TWFE and Callaway–Sant'Anna estimators, the
-   semi-synthetic error-propagation experiment (seed = `12345`,
-   `--sim-reps 200`, `--sim-beta -1.0`), and writes the event-study and
-   descriptive-trajectory figures.
+### 3. Missingness audit
 
-All random seeds and estimator/API settings used to produce the reported
-numbers are fixed as CLI defaults in `staggered_adoption_sensitivity.py`
-(`--seed 12345 --sim-reps 200 --sim-beta -1.0`) and are also recorded in
-`docs/audit_protocol.md` for the LLM extraction pass itself (model, access
-date, temperature, top-p — see that file).
+`Scripts/MissingnessAudit.py` evaluates missing data at several levels:
 
-A single command reproduces every reported table and figure:
+- variable level;
+- country level;
+- year level;
+- dataset level.
+
+It also produces missingness summaries, yearly plots, heatmaps, and Excel audit tables.
 
 ```bash
-bash scripts/run_all.sh   # writes everything under results/ and figures/generated/
+python Scripts/MissingnessAudit.py
 ```
 
-See `MANIFEST.csv` for the exact script/data source behind every paper
-figure and table.
+As with the sample loader and cross-validation script, the current implementation expects `DigitalNomadDataset.xlsx` in the working directory.
 
-### What this repository does and does not reproduce
+### 4. Staggered-adoption sensitivity analysis
 
-- **Reproduces exactly:** all statistical results, tables, and figures in
-  the paper that are computed from `data/intermediate/` and
-  `data/processed/` — i.e., everything downstream of the completed audit.
-- **Does not re-run:** the original LLM extraction pass itself (Stage 1
-  discovery and Stage 2 field audit), since this used an interactive,
-  browsing-enabled chat interface rather than a scripted API call and is
-  not deterministically replayable. The protocol, model identity, access
-  dates, and generation parameters used for that pass are fully documented
-  in `docs/audit_protocol.md` so a new run can be attempted independently;
-  its *output* (the audited files) is what is released and versioned here.
+The main empirical analysis is implemented in:
 
-### Clean-environment test
+```text
+Scripts/Results/staggered_adoption_sensitivity.py
+```
 
-`tests/test_fresh_environment.sh` builds the environment from scratch in a
-container, runs `scripts/run_all.sh`, and checks the output files against
-`checksums.sha256`. This is also wired up as `.github/workflows/reproduce.yml`
-so every push is verified automatically.
+It performs the following steps:
 
----
+1. loads the audit and macroeconomic panel;
+2. parses announcement and effective dates;
+3. distinguishes calendar-year adoption from first full exposure;
+4. constructs the main treatment sample;
+5. estimates group-time treatment associations using never-treated countries;
+6. aggregates results by event time;
+7. estimates a conventional TWFE benchmark;
+8. produces treatment-date sensitivity data;
+9. runs the semi-synthetic error-propagation experiment;
+10. generates descriptive/event-time figures;
+11. saves the analysis-ready panel and result tables.
 
-## Data dictionary
+The default simulation settings in the script are:
 
-`docs/data_dictionary.md` documents every released field: definition, unit,
-source, and harmonization rule. It covers three linked tables:
+```text
+--sim-reps 200
+--sim-beta -1.0
+--seed 12345
+```
 
-| Table | File | Contents |
-|---|---|---|
-| `tourism_and_macroeconomic_data` | `data/processed/digital_nomad_panel.xlsx` | Country-year macro/tourism panel (World Bank Open Data, UN Tourism) |
-| `Policy_Data` | `data/processed/digital_nomad_panel.xlsx` | Adoption-year policy panel |
-| Stage-1/Stage-2 audit fields | `data/intermediate/*.xlsx`, `*.csv` | LLM- and human-derived policy fields with evidence spans, sources, confidence codes |
-
-A short, abbreviated version of the same dictionary is reproduced in the
-paper (Table: abbreviated data dictionary); `docs/data_dictionary.md` is the
-complete, authoritative version.
-
-### Primary-source provenance
-
-Every human-verified field in `data/intermediate/stage1_human_audit.csv` and
-`stage2_llm_field_audit.xlsx` carries: controlling evidence span, source
-title, issuing authority, URL, access date, raw value with original
-unit/currency, and a confidence code. `docs/provenance/` indexes these by
-jurisdiction for quick lookup and citation.
-
----
-
-## Data separation and redistribution
-
-- **Raw** (`data/raw/`): unmodified World Bank Open Data and UN Tourism
-  extracts. Redistributed here under their respective open-data terms (see
-  `DATA_LICENSE.md`); do not edit in place.
-- **Intermediate** (`data/intermediate/`): LLM-extracted and human-audited
-  policy fields, including evidence spans quoted or paraphrased from primary
-  legal sources. Released for replication; quoted spans are short and used
-  under standard research/fair-use norms — do not treat this as a bulk
-  republication of the underlying legal instruments themselves.
-- **Processed** (`data/processed/`): the harmonized, analysis-ready panel
-  produced by merging raw + intermediate data and applying the
-  harmonization rules in `docs/data_dictionary.md`. Fully derived, no
-  redistribution restrictions beyond `DATA_LICENSE.md`.
-
----
-
-## License
-
-- **Code** (`scripts/`, this repository's tooling): MIT — see `LICENSE`.
-- **Released data and figures** (`data/`, `figures/`): see `DATA_LICENSE.md`
-  for terms, which follow the redistribution terms of the underlying World
-  Bank / UN Tourism sources for raw data and CC-BY 4.0 for originally
-  produced tables, figures, and the verified audit benchmark.
-
-## Integrity
-
-`checksums.sha256` lists SHA-256 hashes for every file under `data/` and
-every pinned example output under `results/`. Verify with:
+A reproducible run from the repository root can be made explicit by supplying the files that are actually present in this repository:
 
 ```bash
-sha256sum -c checksums.sha256
+python Scripts/Results/staggered_adoption_sensitivity.py \
+  --audit Data/Intermediate/Audit_Stage1_Stage2.csv \
+  --panel Data/Processed/DigitalNomadDataset.xlsx \
+  --output-dir Scripts/Results/dnm_sensitivity \
+  --sim-reps 200 \
+  --sim-beta -1.0 \
+  --seed 12345
 ```
+
+The analysis script writes outputs including:
+
+```text
+Scripts/Results/dnm_sensitivity/
+├── audit_with_treatment_dates.csv
+├── sample_flow.csv
+├── cs_group_time_associations.csv
+├── cs_event_time_associations.csv
+├── twfe_benchmark.csv
+├── treatment_date_sensitivity_country_level.csv
+├── semi_synthetic_summary.csv
+├── semi_synthetic_metadata.csv
+├── analysis_panel_main.csv
+├── event_time_associations.svg
+└── descriptive_unemployment_trajectories.svg
+```
+
+---
+
+## Statistical approach
+
+### TWFE benchmark
+
+The analysis includes a conventional two-way fixed-effects benchmark with:
+
+- country fixed effects;
+- year fixed effects;
+- a treatment indicator based on first full exposure;
+- lagged covariates including log GDP, inflation, and internet usage.
+
+### Callaway–Sant'Anna-style group-time analysis
+
+The repository implements a never-treated-control group-time DID estimator.
+
+For treatment cohort \(g\) and year \(t\), the estimator compares the change from the pre-treatment base year \(g-1\) to year \(t\) for the treated cohort against the corresponding change among never-treated countries.
+
+The repository then aggregates these group-time estimates by event time.
+
+This implementation should be understood as a **CS-style group-time association estimator using never-treated controls**, not as a general solution to endogenous treatment adoption.
+
+### Treatment-date sensitivity
+
+The analysis explicitly distinguishes:
+
+- the policy's calendar-year adoption date; and
+- the first year of full exposure.
+
+This distinction is central to the error-propagation experiment because announcement dates can precede the date on which a policy becomes legally or practically operative.
+
+### Semi-synthetic experiment
+
+The semi-synthetic component introduces a controlled treatment-date error and evaluates how that error affects downstream estimates.
+
+The experiment is designed to isolate the consequences of curation/timing error rather than to claim that the simulated effect represents the true causal effect of DNV adoption.
+
+---
+
+## Figures
+
+The `Figs/` directory contains existing visual outputs and their source scripts, including:
+
+- `digital_nomad_map.svg`
+- `event_study.svg`
+- `twfe_vs_cs.svg`
+- `thailand_vietnam.svg`
+- `missingness.svg`
+
+Associated Python scripts include:
+
+- `Figs/event_study.py`
+- `Figs/twfe_vs_cs.py`
+- `Figs/thailand_vietnam.py`
+- `Figs/missingness.py`
+
+These files provide the figure-generation code and the corresponding rendered SVG outputs included in the repository.
+
+---
+
+## Reproducibility and current repository limitations
+
+This repository contains the data and scripts used for the analysis, but it does **not** currently include some of the automation files described in earlier versions of the README, such as:
+
+- `requirements.txt`;
+- `environment.yml`;
+- `run_all.sh`;
+- a `tests/` directory;
+- GitHub Actions reproduction workflow;
+- `MANIFEST.csv`;
+- `checksums.sha256`;
+- `CITATION.cff`.
+
+Accordingly, reproduction should currently be performed script-by-script using the files and paths present in the repository.
+
+The Python scripts import the following main packages:
+
+```text
+pandas
+numpy
+scipy
+statsmodels
+matplotlib
+seaborn
+openpyxl
+```
+
+Install them in your preferred Python environment before running the analysis.
+
+For example:
+
+```bash
+python -m pip install pandas numpy scipy statsmodels matplotlib seaborn openpyxl
+```
+
+The original LLM screening/audit session itself is not deterministically replayable. What is reproducible from this repository is the downstream analysis performed on the released audit and processed datasets.
+
+---
+
+## Data provenance and evidence
+
+The audit documentation emphasizes field-level provenance. Where populated, audit records preserve information such as:
+
+- evidence span or paraphrase;
+- primary-source URL;
+- source title;
+- issuing authority;
+- access date;
+- raw value;
+- original unit or currency;
+- normalization rule;
+- confidence/verification status.
+
+The repository therefore separates **source evidence** from **derived analytical variables** rather than treating a transformed value as the original legal requirement.
+
+For detailed provenance and field definitions, see:
+
+- [`Docs/data_dictionary.md`](Docs/data_dictionary.md)
+- [`Docs/Stage 1 and Stage 2: LLM, Retrieval, Source-Hierarchy, and Field-Level Audit.md`](Docs/Stage%201%20and%20Stage%202%3A%20LLM%2C%20Retrieval%2C%20Source-Hierarchy%2C%20and%20Field-Level%20Audit.md)
+
+---
+
+## Licensing
+
+The repository's code is released under the **MIT License**. See [`LICENSE`](LICENSE) for the complete license text.
+
+The raw data files retain the licensing and redistribution conditions of their underlying sources. Users should verify the applicable terms for any third-party World Bank and UN Tourism data before redistributing them independently.
+
+---
+
+## Research status
+
+The repository is structured as an **anonymous research/replication repository**. The accompanying audit documentation records the methodology and the date of the LLM-assisted research pass.
+
+The repository should therefore be read as a research artifact: the audited policy data, provenance records, statistical scripts, and generated figures are intended to support inspection and replication of the reported analysis, while the original interactive LLM browsing session is not itself replayable.
+
+---
 
 ## Citation
 
-See `CITATION.cff`. This repository is anonymized for double-blind review;
-a de-anonymized citation will be added after the review process concludes.
+Citation information is not provided as a separate `CITATION.cff` file in the current repository. Until a final bibliographic record is added, please cite the associated paper/research project and identify this repository as the replication data and analysis repository.
