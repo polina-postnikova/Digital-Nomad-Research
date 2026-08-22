@@ -1,8 +1,10 @@
-# A Global Benchmark Dataset of Digital-Nomad Policy Adoption, Tourism Flows, and Labor-Market Indicators for Cross-Country Mobility Research
+# Trustworthy AI for Global Policy Evidence
 
-<p align="center">
-  <strong>Trustworthy AI-assisted policy curation and a human-verified benchmark for digital nomad visa research</strong><br>
-</p>
+**Auditing LLM-Curated Digital-Nomad Visa Data and Evaluating Downstream Causal Consequences**
+
+![SDG 8](assets/sdg8_icon.svg) **SDG 8 — Decent Work and Economic Growth**
+
+> Anonymous replication repository. Submitted for double-blind review.
 
 <p align="center">
   <img alt="Trustworthy AI" src="https://img.shields.io/badge/Trustworthy%20AI-Human--Verified-4F6BED">
@@ -12,221 +14,236 @@
   <img alt="Methods" src="https://img.shields.io/badge/Methods-TWFE%20%7C%20DML-B35C00">
 </p>
 
-**A Global Benchmark Dataset of Digital-Nomad Policy Adoption, Tourism Flows, and Labor-Market Indicators for Cross-Country Mobility Research** is an open research benchmark for evaluating **AI-assisted policy extraction** through complete human verification and downstream empirical validation. The project combines a global macroeconomic panel covering approximately **190 countries** with a **human-verified benchmark of 32 digital nomad visa programmes**, allowing researchers to evaluate the reliability of large language model (LLM) policy extraction and assess how policy curation errors affect downstream econometric analysis.
 
-Unlike conventional policy datasets, every verified policy record has been independently validated against official government websites and primary legal sources. The benchmark is intended to support reproducible research in trustworthy AI, policy analytics, and computational social science.
+## Research question
 
----
+Large Language Models are increasingly used to curate structured policy datasets
+from unstructured legal text, but little is known about how the resulting
+extraction errors propagate into downstream causal-timing inference. This
+repository accompanies a paper that asks:
 
-# Release Snapshot
+> **How can researchers determine whether LLM-curated global policy data are
+> sufficiently trustworthy for consequential comparative and causal analysis?**
 
-| Component | Current Release |
-|------------|-----------------|
-| Verified policy benchmark | 32 adopter jurisdictions |
-| Non-adopter reference set | 11 jurisdictions |
-| Macroeconomic panel | 190 countries |
-| Time coverage | Annual country panel, 2008–2024 |
-| Policy variables | Adoption year, visa duration, income requirement, visa fees, tax treatment |
-| Verification | Human-verified against official sources |
-| Downstream evaluation | TWFE and Doubly Robust DML |
-| Primary contribution | Trustworthy AI-assisted policy curation |
-| Application domain | Digital nomad visa policy |
+We answer this with a two-stage audit — an LLM extraction pass followed by
+complete, independent human verification against primary legal gazettes and
+immigration portals — applied to a 190-jurisdiction digital-nomad visa (DNV)
+policy panel, and a semi-synthetic error-propagation experiment that traces
+one specific curation error (announcement date vs. verified effective date)
+through a staggered-adoption difference-in-differences estimator.
 
 ---
 
-# Why This Benchmark Exists
+## Repository structure
 
-Digital Nomad Research is designed around three complementary research objectives.
-
-- **Trustworthy AI:** Evaluate the reliability of LLM-assisted policy extraction through complete human verification.
-- **Benchmark Construction:** Provide a transparent, reproducible benchmark for digital nomad visa policies.
-- **Downstream Evaluation:** Measure whether observed policy extraction errors materially influence empirical policy conclusions.
-
-Rather than proposing a new causal inference method, the repository evaluates how AI-generated policy datasets affect downstream statistical analyses.
-
----
-
-# Repository Structure
-
-```text
-Digital-Nomad-Research/
+```
+.
+├── README.md                          <- this file
+├── LICENSE                            <- code license (MIT, see below)
+├── DATA_LICENSE.md                    <- license/terms for released data + figures
+├── CITATION.cff                       <- machine-readable citation
+├── environment.yml / requirements.txt <- reproducible environment
+├── MANIFEST.csv                       <- paper figure/table -> script -> data map
+├── checksums.sha256                   <- integrity hashes for all released files
+├── paper/
+│   └── main.tex                       <- anonymized paper source (was test.tex)
 │
-├── visualizations/
-│   ├── custom.geo-2.json         # Custom geography file for map visualizations
-│   ├── differenceindifference.py # Difference-in-differences visualization
-│   └── map.py                    # Choropleth / geographic visualization
+├── data/
+│   ├── raw/                           <- untouched third-party downloads (read-only)
+│   │   ├── world_bank_indicators/     <- GDP, unemployment, inflation, internet use, etc.
+│   │   └── un_tourism/                <- arrivals, tourism expenditure, tourism GDP share
+│   ├── intermediate/                  <- LLM + human audit artifacts (pre-harmonization)
+│   │   ├── stage1_llm_screening.xlsx      (was LLM_Stage1.xlsx)
+│   │   ├── stage2_llm_field_audit.xlsx    (was LLM_Stage2.xlsx)
+│   │   └── stage1_human_audit.csv         (was Completed_Stage1_Audit_190-4.csv)
+│   └── processed/                     <- analysis-ready, harmonized panel (script output)
+│       └── digital_nomad_panel.xlsx       (was DigitalNomadDataset.xlsx)
 │
-├── DigitalNomadDataset.xlsx       # Core dataset (3 sheets, see Dataset Overview)
-├── sample_loader.py               # Loads and merges macroeconomic + policy data
-├── naive_baseline.py              # Naive (unverified) policy baseline estimation
-├── MissingnessAudit.py            # Missing-data audit across panel variables
-├── CrossValidation.py             # Cross-validation of AI-extracted vs. verified policy data
-├── twfe_dml.py                    # TWFE and Doubly Robust DML estimation
+├── docs/
+│   ├── data_dictionary.md             <- full field-by-field dictionary (see below)
+│   ├── audit_protocol.md              <- converted from protocol_completed.docx
+│   └── provenance/                    <- one record per verified primary-source citation
 │
-├── LICENSE
-└── README.md
+├── scripts/
+│   ├── 00_load/
+│   │   └── load_sample.py                 (was sample_loader.py)
+│   ├── 01_validate/
+│   │   └── cross_validate_tourism.py       (was CrossValidation-2.py)
+│   ├── 02_audit/
+│   │   └── missingness_audit.py            (was MissingnessAudit-2.py)
+│   ├── 03_analysis/
+│   │   └── staggered_adoption_sensitivity.py (was ml.py)
+│   └── run_all.sh                     <- single entry point, see "Reproduction" below
+│
+├── figures/
+│   ├── source/                        <- editable diagram sources (drawio/svg)
+│   │   └── pipeline_diagram.drawio.svg     (was figurelight_drawio.svg)
+│   └── generated/                     <- outputs written by scripts (gitignored, rebuilt)
+│
+├── results/                           <- all tables/CSVs written by scripts (gitignored)
+│
+├── tests/
+│   └── test_fresh_environment.sh      <- clean-environment smoke test (see below)
+│
+└── .github/workflows/reproduce.yml    <- CI job that reruns run_all.sh on every push
+```
+
+Only `data/raw/` and `data/intermediate/` are tracked as static input data.
+Everything under `data/processed/`, `figures/generated/`, and `results/` is
+**generated by the scripts** and is git-ignored except for a small set of
+pinned example outputs used by the CI smoke test.
+
+---
+
+## Requirements
+
+- Python 3.11
+- Packages (pinned in `requirements.txt` / `environment.yml`):
+  `pandas`, `numpy`, `scipy`, `statsmodels`, `matplotlib`, `seaborn`, `openpyxl`
+- No GPU or paid API access is required to **reproduce the released results**:
+  the LLM extraction pass itself is not re-run by this repository (see
+  "What this repository does and does not reproduce" below); all downstream
+  scripts operate on the already-extracted/audited files in `data/intermediate/`.
+
+Install with either:
+
+```bash
+# conda / mamba
+mamba env create -f environment.yml
+conda activate dnv-audit
+
+# or pip
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ---
 
-# Main Repository Components
+## Reproduction
 
-| File / Folder | Description |
-|------------|-------------|
-| `DigitalNomadDataset.xlsx` | Core dataset: macroeconomic panel, verified policy benchmark, and non-adopter reference set |
-| `sample_loader.py` | Loads and merges the macroeconomic panel with the verified policy benchmark |
-| `naive_baseline.py` | Constructs a naive baseline using unverified, AI-extracted policy data |
-| `MissingnessAudit.py` | Audits missingness patterns across macroeconomic and policy variables |
-| `CrossValidation.py` | Cross-validates AI-extracted policy records against the human-verified benchmark |
-| `twfe_dml.py` | Runs Two-Way Fixed Effects (TWFE) and Doubly Robust DML estimation |
-| `visualizations/map.py` | Produces geographic/choropleth visualizations of policy adoption |
-| `visualizations/differenceindifference.py` | Produces difference-in-differences event-study figures |
-| `visualizations/custom.geo-2.json` | Custom geography file used by the mapping script |
+From a clean environment:
+
+```bash
+git clone <anonymized-repo-url>
+cd <repo>
+mamba env create -f environment.yml && conda activate dnv-audit
+bash scripts/run_all.sh
+```
+
+`run_all.sh` runs, in order:
+
+1. `scripts/00_load/load_sample.py` — sanity-loads the panel and prints head
+   of each sheet.
+2. `scripts/01_validate/cross_validate_tourism.py` — pooled and per-country
+   arrivals/expenditure growth-rate validation (produces
+   `results/arrival_expenditure_validation.csv` and
+   `figures/generated/pooled_tourism_growth_relationship.svg`).
+3. `scripts/02_audit/missingness_audit.py` — variable-, country-, and
+   year-level missingness audit for every sheet (produces the missingness
+   tables/heatmaps used in the appendix).
+4. `scripts/03_analysis/staggered_adoption_sensitivity.py` — builds the
+   analysis panel, runs the TWFE and Callaway–Sant'Anna estimators, the
+   semi-synthetic error-propagation experiment (seed = `12345`,
+   `--sim-reps 200`, `--sim-beta -1.0`), and writes the event-study and
+   descriptive-trajectory figures.
+
+All random seeds and estimator/API settings used to produce the reported
+numbers are fixed as CLI defaults in `staggered_adoption_sensitivity.py`
+(`--seed 12345 --sim-reps 200 --sim-beta -1.0`) and are also recorded in
+`docs/audit_protocol.md` for the LLM extraction pass itself (model, access
+date, temperature, top-p — see that file).
+
+A single command reproduces every reported table and figure:
+
+```bash
+bash scripts/run_all.sh   # writes everything under results/ and figures/generated/
+```
+
+See `MANIFEST.csv` for the exact script/data source behind every paper
+figure and table.
+
+### What this repository does and does not reproduce
+
+- **Reproduces exactly:** all statistical results, tables, and figures in
+  the paper that are computed from `data/intermediate/` and
+  `data/processed/` — i.e., everything downstream of the completed audit.
+- **Does not re-run:** the original LLM extraction pass itself (Stage 1
+  discovery and Stage 2 field audit), since this used an interactive,
+  browsing-enabled chat interface rather than a scripted API call and is
+  not deterministically replayable. The protocol, model identity, access
+  dates, and generation parameters used for that pass are fully documented
+  in `docs/audit_protocol.md` so a new run can be attempted independently;
+  its *output* (the audited files) is what is released and versioned here.
+
+### Clean-environment test
+
+`tests/test_fresh_environment.sh` builds the environment from scratch in a
+container, runs `scripts/run_all.sh`, and checks the output files against
+`checksums.sha256`. This is also wired up as `.github/workflows/reproduce.yml`
+so every push is verified automatically.
 
 ---
 
-# Dataset Overview
+## Data dictionary
 
-`DigitalNomadDataset.xlsx` contains three sheets that together form the benchmark.
+`docs/data_dictionary.md` documents every released field: definition, unit,
+source, and harmonization rule. It covers three linked tables:
 
-## `tourism_and_macroeconomic_data`
+| Table | File | Contents |
+|---|---|---|
+| `tourism_and_macroeconomic_data` | `data/processed/digital_nomad_panel.xlsx` | Country-year macro/tourism panel (World Bank Open Data, UN Tourism) |
+| `Policy_Data` | `data/processed/digital_nomad_panel.xlsx` | Adoption-year policy panel |
+| Stage-1/Stage-2 audit fields | `data/intermediate/*.xlsx`, `*.csv` | LLM- and human-derived policy fields with evidence spans, sources, confidence codes |
 
-A harmonized annual country panel covering **190 countries** from **2008–2024**, with columns:
+A short, abbreviated version of the same dictionary is reproduced in the
+paper (Table: abbreviated data dictionary); `docs/data_dictionary.md` is the
+complete, authoritative version.
 
-- `country_name`, `iso3`, `year`
-- `gdp`
-- `unemployment_rate`
-- `expenditures` (tourism expenditure)
-- `tourism_gdp_share`
-- `tourism_employment`
-- `arrivals_business`, `arrivals_total`
-- `internet_usage_pct`
-- `inflation_annual_pct`
-- `exchange_rate_lcu_per_usd`
-- `price_level_index_gdp`
+### Primary-source provenance
 
-Coverage is unbalanced: not every country reports every variable in every year, which is why `MissingnessAudit.py` exists.
-
-## `policy_data` — Verified Digital Nomad Policy Benchmark
-
-A human-verified benchmark covering **32 adopter jurisdictions**, with columns:
-
-- `iso3`, `country_name`
-- `visa_adoption_year`
-- `coarse_tax_treatment`
-- `min_income_to_apply_per_month`
-- `visa_duration_months`
-- `min_visa_fee`
-
-Every policy record has been independently verified against primary legal documents or official government sources.
-
-## `non_adopters` — Non-Adopter Reference Set
-
-A reference set of **11 jurisdictions** without a formal, standalone digital nomad visa, with columns:
-
-- `iso3`, `country_name`
-- `primary_remote_work_visa`
-- `supplementary_alternative_visas`
-- `opc_corporate_setup_policy` (own-personal-company / corporate-setup workaround policy)
-- `digital_nomad_community_policies`
-
-This sheet supports comparison and robustness checks (e.g. treated-vs-control framing) alongside the 32 verified adopters.
+Every human-verified field in `data/intermediate/stage1_human_audit.csv` and
+`stage2_llm_field_audit.xlsx` carries: controlling evidence span, source
+title, issuing authority, URL, access date, raw value with original
+unit/currency, and a confidence code. `docs/provenance/` indexes these by
+jurisdiction for quick lookup and citation.
 
 ---
 
-# Research Workflow
+## Data separation and redistribution
 
-```text
-Official Government Sources
-            │
-            ▼
-LLM-Assisted Policy Extraction
-            │
-            ▼
-Independent Human Verification
-            │
-            ▼
-Verified Policy Benchmark
-            │
-            ▼
-Merged Macroeconomic Panel
-            │
-            ▼
-Econometric Evaluation
-(TWFE & Doubly Robust DML)
-            │
-            ▼
-Comparison of Raw vs. Verified Policy Data
-```
+- **Raw** (`data/raw/`): unmodified World Bank Open Data and UN Tourism
+  extracts. Redistributed here under their respective open-data terms (see
+  `DATA_LICENSE.md`); do not edit in place.
+- **Intermediate** (`data/intermediate/`): LLM-extracted and human-audited
+  policy fields, including evidence spans quoted or paraphrased from primary
+  legal sources. Released for replication; quoted spans are short and used
+  under standard research/fair-use norms — do not treat this as a bulk
+  republication of the underlying legal instruments themselves.
+- **Processed** (`data/processed/`): the harmonized, analysis-ready panel
+  produced by merging raw + intermediate data and applying the
+  harmonization rules in `docs/data_dictionary.md`. Fully derived, no
+  redistribution restrictions beyond `DATA_LICENSE.md`.
 
 ---
 
-# Reproducing the Paper
+## License
 
-Load and merge the macroeconomic panel with the policy benchmark.
+- **Code** (`scripts/`, this repository's tooling): MIT — see `LICENSE`.
+- **Released data and figures** (`data/`, `figures/`): see `DATA_LICENSE.md`
+  for terms, which follow the redistribution terms of the underlying World
+  Bank / UN Tourism sources for raw data and CC-BY 4.0 for originally
+  produced tables, figures, and the verified audit benchmark.
 
-```bash
-python sample_loader.py
-```
+## Integrity
 
-Construct the naive (unverified) policy baseline.
-
-```bash
-python naive_baseline.py
-```
-
-Audit missingness across the merged panel.
+`checksums.sha256` lists SHA-256 hashes for every file under `data/` and
+every pinned example output under `results/`. Verify with:
 
 ```bash
-python MissingnessAudit.py
+sha256sum -c checksums.sha256
 ```
 
-Cross-validate AI-extracted policy data against the verified benchmark.
+## Citation
 
-```bash
-python CrossValidation.py
-```
-
-Estimate the TWFE and Doubly Robust DML models.
-
-```bash
-python twfe_dml.py
-```
-
-Generate the difference-in-differences figures.
-
-```bash
-python visualizations/differenceindifference.py
-```
-
-Generate the geographic policy-adoption map.
-
-```bash
-python visualizations/map.py
-```
-
----
-
-# Methodological Scope
-
-This repository evaluates whether AI-assisted policy extraction can support empirical policy research through transparent human verification.
-
-The econometric analyses are intended to assess the robustness of downstream inference to policy curation errors. They should not be interpreted as definitive estimates of the causal effects of digital nomad visa adoption.
-
----
-
-# Current Limitations
-
-- The verified benchmark currently includes **32 jurisdictions**.
-- Policy coding requires harmonization across heterogeneous legal systems.
-- Some policy variables require interpretative coding despite independent verification.
-- The empirical analyses remain observational.
-- Findings are specific to digital nomad visa policies and should not be generalized to other policy domains without additional validation.
-
----
-
-# License
-
-The repository code, documentation, and analysis scripts are released under the **MIT License**.
-
-The benchmark dataset is released for academic research and reproducibility. Users should consult the terms of use of the original government data sources when redistributing derived policy information.
+See `CITATION.cff`. This repository is anonymized for double-blind review;
+a de-anonymized citation will be added after the review process concludes.
