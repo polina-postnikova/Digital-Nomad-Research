@@ -1,12 +1,6 @@
 # Data Dictionary
 
-Status: **skeleton — column names and sources are auto-extracted from the
-released files; definitions, units, and harmonization rules marked `TODO`
-still need author input.** This file is the authoritative dictionary;
-Table (abbreviated data dictionary) in the paper is a five-row excerpt of it
-and should be regenerated from this file rather than edited independently.
-
-## 1. `tourism_and_macroeconomic_data` (in `data/processed/digital_nomad_panel.xlsx`)
+## 1. `tourism_and_macroeconomic_data`
 
 Source: World Bank Open Data / UN Tourism (per paper §2).
 
@@ -27,7 +21,7 @@ Source: World Bank Open Data / UN Tourism (per paper §2).
 | `exchange_rate_lcu_per_usd` | Local currency units per USD | ratio | World Bank Open Data | TODO |
 | `price_level_index_gdp` | GDP price level index | index | World Bank Open Data | TODO |
 
-## 2. `Policy_Data` (in `data/processed/digital_nomad_panel.xlsx`)
+## 2. `Policy_Data` 
 
 | Field | Definition | Unit | Source | Harmonization rule |
 |---|---|---|---|---|
@@ -35,7 +29,7 @@ Source: World Bank Open Data / UN Tourism (per paper §2).
 | `ISO3` | ISO 3166-1 alpha-3 country code | code | TODO | TODO |
 | `Adoption year` | Year of DNV policy adoption used in main-text panel | year | Derived from Stage-2 audit | TODO — confirm relation to `launch_or_effective_date` below |
 
-## 3. Stage-1 human audit (`data/intermediate/stage1_human_audit.csv`)
+## 3. Human audit 
 
 | Field | Definition | Unit | Source | Harmonization rule |
 |---|---|---|---|---|
@@ -68,9 +62,3 @@ Sheets: `field_level_audit`, `audit_protocol`, `evidence_log`,
 `source_register`, `stage1_linkage`. TODO: document each sheet's fields the
 same way as above. This is also the source table for Table (error taxonomy) —
 see `MANIFEST.csv`.
-
----
-
-**To finish this file:** fill every `TODO` cell, then regenerate the
-abbreviated in-paper table (Table: abbreviated data dictionary) as a subset
-of these rows so the two never drift out of sync.
