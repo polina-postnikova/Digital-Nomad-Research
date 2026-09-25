@@ -99,20 +99,31 @@ Digital-Nomad-Research-main/
 │   ├── sample_loader.py
 │   ├── CrossValidation.py
 │   ├── MissingnessAudit.py
+│   ├── reproduce_counts.py
 │   └── Results/
 │       ├── staggered_adoption_sensitivity.py
+│       ├── jurisdiction_reconciliation.csv
+│       ├── treatment_year_mapping.csv
+│       ├── adoption_year_check.csv
 │       └── *.csv
 │
 └── Figs/
     ├── digital_nomad_map.svg
     ├── event_study.svg
+    ├── event_study.pdf
+    ├── event_study.png
     ├── twfe_vs_cs.svg
+    ├── twfe_vs_cs.pdf
+    ├── twfe_vs_cs.png
+    ├── teaser.drawio.svg
+    ├── teaser.drawio.xml
     ├── thailand_vietnam.svg
     ├── missingness.svg
+    ├── make_figs.py
     └── *.py
 ```
 
-The repository also contains the source files used to generate several figures in `Figs/` and analysis outputs in `Scripts/Results/`.
+The repository keeps reproducibility scripts under Scripts/, generated/tabular analysis results under Scripts/Results/, and figure sources/exports under Figs/. The latest make_figs.py regenerates the event_study and twfe_vs_cs figures in SVG, PDF, and PNG formats.
 
 ---
 
