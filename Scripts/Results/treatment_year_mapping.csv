@@ -1,0 +1,17 @@
+jurisdiction,announcement,effective,verified_cohort,announcement_year_cohort,identical_dates,first_full_year_observed,shifted
+Argentina,2022-05,2022-05,2023,2022,True,True,True
+Brazil,2021,1/24/22,2022,2021,False,True,True
+Croatia,2021,1/1/21,2021,2021,False,True,False
+Dominica,2021-04,2021-04,2022,2021,True,True,True
+Ecuador,2022-06,2022-06,2023,2022,True,True,True
+Estonia,2020,2020-08,2021,2020,False,True,True
+Greece,2021-09,2021-09,2022,2021,True,True,True
+Hungary,2021,2021-11,2022,2021,False,True,True
+Iceland,2020,2020-10,2021,2020,False,True,True
+Malaysia,2022-10,2022-10,2023,2022,True,True,True
+Mauritius,2020-10,2020-10,2021,2020,True,True,True
+Namibia,2022-10,2022-10,2023,2022,True,True,True
+Portugal,2022-10,2022-10,2023,2022,True,True,True
+Romania,2022-01,1/14/22,2022,2022,False,True,False
+Uruguay,2023-05,2023-05,2024,2023,True,True,True
+Cabo Verde,2020-12,2020-12,2021,2020,True,True,True
