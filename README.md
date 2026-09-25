@@ -66,9 +66,16 @@ A country can have a historical DNV adoption event while no longer operating the
 ## Repository structure
 
 ```text
-Digital-Nomad-Research-main/
+Digital-Nomad-Research/
 ├── README.md
+├── REPRODUCIBILITY.md
+├── CITATION.cff
 ├── LICENSE
+├── MANIFEST.csv
+├── checksums.sha256
+├── environment.yml
+├── requirements.txt
+├── run_all.sh
 │
 ├── Data/
 │   ├── Raw/
@@ -100,31 +107,37 @@ Digital-Nomad-Research-main/
 │   ├── CrossValidation.py
 │   ├── MissingnessAudit.py
 │   ├── reproduce_counts.py
+│   ├── staggered_adoption_sensitivity.py
 │   └── Results/
-│       ├── staggered_adoption_sensitivity.py
-│       ├── jurisdiction_reconciliation.csv
-│       ├── treatment_year_mapping.csv
 │       ├── adoption_year_check.csv
-│       └── *.csv
+│       ├── analysis_panel_main.csv
+│       ├── audit_with_treatment_dates.csv
+│       ├── cs_event_time_associations.csv
+│       ├── cs_group_time_associations.csv
+│       ├── jurisdiction_reconciliation.csv
+│       ├── sample_flow.csv
+│       ├── semi_synthetic_metadata.csv
+│       ├── semi_synthetic_summary.csv
+│       ├── treatment_date_sensitivity_country_level.csv
+│       ├── treatment_year_mapping.csv
+│       └── twfe_benchmark.csv
 │
 └── Figs/
+    ├── descriptive_unemployment_trajectories.svg
     ├── digital_nomad_map.svg
     ├── event_study.svg
-    ├── event_study.pdf
-    ├── event_study.png
-    ├── twfe_vs_cs.svg
-    ├── twfe_vs_cs.pdf
-    ├── twfe_vs_cs.png
+    ├── missingness.svg
+    ├── pooled_tourism_growth_relationship.svg
     ├── teaser.drawio.svg
     ├── teaser.drawio.xml
     ├── thailand_vietnam.svg
-    ├── missingness.svg
+    ├── twfe_vs_cs.svg
     ├── make_figs.py
-    └── *.py
+    ├── missingness.py
+    └── thailand_vietnam.py
 ```
 
-The repository keeps reproducibility scripts under Scripts/, generated/tabular analysis results under Scripts/Results/, and figure sources/exports under Figs/. The latest make_figs.py regenerates the event_study and twfe_vs_cs figures in SVG, PDF, and PNG formats.
-
+The repository separates source data, intermediate audit material, processed analysis data, analysis scripts, tabular results, and figure assets. Root-level environment and reproducibility files provide the documented execution setup.
 ---
 
 ## Data
@@ -215,7 +228,7 @@ The documented Stage 2 review date is **2026-08-09**.
 
 ## Analysis workflow
 
-The repository contains four main analysis components.
+The repository contains four main analysis components, plus the reproducibility utilities described below.
 
 ### 1. Sample inspection
 
@@ -296,28 +309,28 @@ A reproducible run from the repository root can be made explicit by supplying th
 python Scripts/Results/staggered_adoption_sensitivity.py \
   --audit Data/Intermediate/Audit_Stage1_Stage2.csv \
   --panel Data/Processed/DigitalNomadDataset.xlsx \
-  --output-dir Scripts/Results/dnm_sensitivity \
+  --output-dir Scripts/Results \
   --sim-reps 200 \
   --sim-beta -1.0 \
   --seed 12345
 ```
 
-The analysis script writes outputs including:
+The analysis script writes tabular outputs to `Scripts/Results/`, including:
 
-```text
-Scripts/Results/dnm_sensitivity/
-├── audit_with_treatment_dates.csv
-├── sample_flow.csv
-├── cs_group_time_associations.csv
-├── cs_event_time_associations.csv
-├── twfe_benchmark.csv
-├── treatment_date_sensitivity_country_level.csv
-├── semi_synthetic_summary.csv
-├── semi_synthetic_metadata.csv
-├── analysis_panel_main.csv
-├── event_time_associations.svg
-└── descriptive_unemployment_trajectories.svg
-```
+- `audit_with_treatment_dates.csv`
+- `sample_flow.csv`
+- `cs_group_time_associations.csv`
+- `cs_event_time_associations.csv`
+- `twfe_benchmark.csv`
+- `treatment_date_sensitivity_country_level.csv`
+- `semi_synthetic_summary.csv`
+- `semi_synthetic_metadata.csv`
+- `analysis_panel_main.csv`
+- `adoption_year_check.csv`
+- `jurisdiction_reconciliation.csv`
+- `treatment_year_mapping.csv`
+
+The repository's committed figure assets are kept separately in `Figs/`.
 
 ---
 
@@ -361,62 +374,65 @@ The experiment is designed to isolate the consequences of curation/timing error 
 
 ## Figures
 
-The `Figs/` directory contains existing visual outputs and their source scripts, including:
+The `Figs/` directory contains the committed visual outputs and the scripts used for selected figures.
+
+### Current figure outputs
 
 - `digital_nomad_map.svg`
 - `event_study.svg`
 - `twfe_vs_cs.svg`
-- `thailand_vietnam.svg`
+- `descriptive_unemployment_trajectories.svg`
+- `pooled_tourism_growth_relationship.svg`
 - `missingness.svg`
+- `thailand_vietnam.svg`
+- `teaser.drawio.svg`
+- `teaser.drawio.xml`
 
-Associated Python scripts include:
+### Figure-generation scripts
 
-- `Figs/event_study.py`
-- `Figs/twfe_vs_cs.py`
-- `Figs/thailand_vietnam.py`
-- `Figs/missingness.py`
+- `Figs/make_figs.py` — generates the event-study and TWFE-vs-CS figures.
+- `Figs/missingness.py` — generates the missingness figure.
+- `Figs/thailand_vietnam.py` — generates the Thailand/Vietnam figure.
 
-These files provide the figure-generation code and the corresponding rendered SVG outputs included in the repository.
-
+The repository currently commits SVG figure outputs rather than separate PDF/PNG exports.
 ---
 
-## Reproducibility and current repository limitations
+## Reproducibility
 
-This repository contains the data and scripts used for the analysis, but it does **not** currently include some of the automation files described in earlier versions of the README, such as:
+The repository includes the infrastructure needed for a documented replication workflow:
 
-- `requirements.txt`;
-- `environment.yml`;
-- `run_all.sh`;
-- a `tests/` directory;
-- GitHub Actions reproduction workflow;
-- `MANIFEST.csv`;
-- `checksums.sha256`;
-- `CITATION.cff`.
+- `environment.yml` and `requirements.txt` — Python environment specifications;
+- `run_all.sh` — ordered entry point for the downstream analysis;
+- `REPRODUCIBILITY.md` — detailed reproduction and verification instructions;
+- `MANIFEST.csv` — file-level manifest;
+- `checksums.sha256` — SHA-256 integrity hashes;
+- `CITATION.cff` — citation metadata.
 
-Accordingly, reproduction should currently be performed script-by-script using the files and paths present in the repository.
-
-The Python scripts import the following main packages:
-
-```text
-pandas
-numpy
-scipy
-statsmodels
-matplotlib
-seaborn
-openpyxl
-```
-
-Install them in your preferred Python environment before running the analysis.
-
-For example:
+Run the full workflow from the repository root with:
 
 ```bash
-python -m pip install pandas numpy scipy statsmodels matplotlib seaborn openpyxl
+./run_all.sh
 ```
 
-The original LLM screening/audit session itself is not deterministically replayable. What is reproducible from this repository is the downstream analysis performed on the released audit and processed datasets.
+For a fast smoke test using two simulation repetitions:
 
+```bash
+SIM_REPS=2 ./run_all.sh
+```
+
+The main analysis script is:
+
+```text
+Scripts/staggered_adoption_sensitivity.py
+```
+
+The released analysis results are stored in:
+
+```text
+Scripts/Results/
+```
+
+The original LLM screening/audit session is not deterministically replayable. What is reproducible from this repository is the downstream analysis performed on the released audit and processed datasets.
 ---
 
 ## Data provenance and evidence
@@ -460,30 +476,6 @@ The repository should therefore be read as a research artifact: the audited poli
 
 ## Citation
 
-Citation information is not provided as a separate `CITATION.cff` file in the current repository. Until a final bibliographic record is added, please cite the associated paper/research project and identify this repository as the replication data and analysis repository.
+Citation metadata is provided in `CITATION.cff`. Please use that file for the repository citation information.
 
 
-## Reproducibility checklist
-
-The repository now includes the infrastructure needed for a clean replication workflow:
-
-- `reproducibility.yml` — fixed analysis seed, simulation settings, and documented LLM/model settings;
-- `environment.yml` and `requirements.txt` — pinned Python environment specifications;
-- `run_all.sh` — single ordered entry point for the downstream analysis and scripted figures;
-- `MANIFEST.csv` — figure/result-to-script/input mapping;
-- `checksums.sha256` — SHA-256 integrity hashes for stable released files;
-- `tests/test_fresh_environment.sh` — fresh-environment smoke test.
-
-Run the full workflow with:
-
-```bash
-./run_all.sh
-```
-
-For a fast smoke test using two simulation repetitions:
-
-```bash
-SIM_REPS=2 ./run_all.sh
-```
-
-See [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) for the detailed checklist and verification instructions.
